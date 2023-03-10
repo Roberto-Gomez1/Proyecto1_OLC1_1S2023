@@ -1,0 +1,61 @@
+package Analizadores;
+import java_cup.runtime.*;
+//java -jar C:\Users\carlo\OneDrive\Escritorio\Semestre\Compi1\librerias2\java-cup-11b.jar Parser.cup
+//java -jar C:\Users\carlo\OneDrive\Escritorio\Semestre\Compi1\librerias2\jflex-full-1.7.0.jar Lex.jflex
+parser code
+{://Codigo visible
+
+    public void syntax_error(Symbol s){
+        System.out.println("Error sintactico: "+ s.value +" Linea "+(s.left+1)+" columna "+(s.right+1) );
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        System.out.println("Error NR de sintaxis: "+ s.value +" Linea "+(s.left+1)+" columna "+(s.right+1) );
+    }
+
+:}
+
+
+terminal String RCONJ, DOS_PUNTOS, GUION, MAYOR, COMA, PALITO, LLAVE_ABRE, LLAVE_CIERRA, PUNTO, OR,
+ASTERISCO, SUMA, PREGUNTA, PORCENTAJE, PUNTO_COMA, IDENTIFICADOR, COMILLA,
+NOMBRE, NOMBRE_M, ENTERO, ASCII, CARACTER, CADENA;
+
+non terminal Codigo;
+non terminal primera_parte, segunda_parte, instruccion, notacion, conjunto_coma, singular, expresion_regular, evaluacion;
+
+start with Codigo;
+
+Codigo::= LLAVE_ABRE primera_parte PORCENTAJE PORCENTAJE PORCENTAJE PORCENTAJE segunda_parte LLAVE_CIERRA;
+
+primera_parte::= primera_parte instruccion|
+                        instruccion;
+
+instruccion ::= RCONJ DOS_PUNTOS IDENTIFICADOR GUION MAYOR notacion PUNTO_COMA|
+                        IDENTIFICADOR GUION MAYOR expresion_regular PUNTO_COMA;
+
+notacion ::= NOMBRE_M PALITO NOMBRE_M|
+             NOMBRE PALITO NOMBRE|
+             ENTERO PALITO ENTERO|
+             ASCII PALITO ASCII|
+             conjunto_coma;
+
+conjunto_coma::= conjunto_coma COMA singular|
+                    singular;
+
+singular::= NOMBRE_M|
+            NOMBRE|
+            ENTERO|
+            ASCII;
+
+expresion_regular ::= PUNTO expresion_regular expresion_regular|
+                      OR expresion_regular expresion_regular|
+                      ASTERISCO expresion_regular|
+                      SUMA expresion_regular|
+                      PREGUNTA expresion_regular|
+                      CARACTER|
+                      LLAVE_ABRE IDENTIFICADOR LLAVE_CIERRA;
+
+segunda_parte::= segunda_parte evaluacion|
+                        evaluacion;
+
+evaluacion::= IDENTIFICADOR DOS_PUNTOS CADENA PUNTO_COMA;
