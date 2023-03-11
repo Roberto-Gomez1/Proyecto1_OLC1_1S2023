@@ -1,6 +1,8 @@
 package ProyectoEjecutable;
 
 import Analizadores.Lexico;
+import Analizadores.Nodo_binario;
+import Analizadores.Automata;
 import Analizadores.parser;
 import java.io.File;
 import java.util.Scanner;
@@ -14,6 +16,8 @@ public class Main {
             aux += sca.nextLine()+"\n";
         }
         interpretar(aux);
+
+
     }
     private static void interpretar(String aux){
         try{
