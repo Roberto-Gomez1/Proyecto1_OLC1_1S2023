@@ -78,11 +78,13 @@ expresion ::= PUNTO:a expresion:b expresion:c {:
                       CARACTER:a {:
                             Nodo_binario hoja = new Nodo_binario(a);
                             hoja.setHoja(true);
+                            hoja.setAnulable(false);
                             RESULT = hoja;
                       :}|
                       LLAVE_ABRE IDENTIFICADOR:a LLAVE_CIERRA{:
                         Nodo_binario hoja = new Nodo_binario(a);
                         hoja.setHoja(true);
+                        hoja.setAnulable(false);
                         RESULT = hoja;
                         :};
 

@@ -646,67 +646,67 @@ public class Lexico implements java_cup.runtime.Scanner {
             // fall through
           case 27: break;
           case 2: 
-            { System.out.println(yytext()+" - NOMBRE_M"); return new Symbol(sym.NOMBRE_M, yyline, yycolumn,yytext());
+            { return new Symbol(sym.NOMBRE_M, yyline, yycolumn,yytext());
             } 
             // fall through
           case 28: break;
           case 3: 
-            { System.out.println(yytext()+" - DOS_PUNTOS"); return new Symbol(sym.DOS_PUNTOS, yyline, yycolumn,yytext());
+            { return new Symbol(sym.DOS_PUNTOS, yyline, yycolumn,yytext());
             } 
             // fall through
           case 29: break;
           case 4: 
-            { System.out.println(yytext()+" - COMA"); return new Symbol(sym.COMA, yyline, yycolumn,yytext());
+            { return new Symbol(sym.COMA, yyline, yycolumn,yytext());
             } 
             // fall through
           case 30: break;
           case 5: 
-            { System.out.println(yytext()+" - PALITO"); return new Symbol(sym.PALITO, yyline, yycolumn,yytext());
+            { return new Symbol(sym.PALITO, yyline, yycolumn,yytext());
             } 
             // fall through
           case 31: break;
           case 6: 
-            { System.out.println(yytext()+" - LLAVE_ABRE"); return new Symbol(sym.LLAVE_ABRE, yyline, yycolumn,yytext());
+            { return new Symbol(sym.LLAVE_ABRE, yyline, yycolumn,yytext());
             } 
             // fall through
           case 32: break;
           case 7: 
-            { System.out.println(yytext()+" - LLAVE_CIERRA"); return new Symbol(sym.LLAVE_CIERRA, yyline, yycolumn,yytext());
+            { return new Symbol(sym.LLAVE_CIERRA, yyline, yycolumn,yytext());
             } 
             // fall through
           case 33: break;
           case 8: 
-            { System.out.println(yytext()+" - PUNTO"); return new Symbol(sym.PUNTO, yyline, yycolumn,yytext());
+            { return new Symbol(sym.PUNTO, yyline, yycolumn,yytext());
             } 
             // fall through
           case 34: break;
           case 9: 
-            { System.out.println(yytext()+" - OR"); return new Symbol(sym.OR, yyline, yycolumn,yytext());
+            { return new Symbol(sym.OR, yyline, yycolumn,yytext());
             } 
             // fall through
           case 35: break;
           case 10: 
-            { System.out.println(yytext()+" - ASTERISCO"); return new Symbol(sym.ASTERISCO, yyline, yycolumn,yytext());
+            { return new Symbol(sym.ASTERISCO, yyline, yycolumn,yytext());
             } 
             // fall through
           case 36: break;
           case 11: 
-            { System.out.println(yytext()+" - SUMA"); return new Symbol(sym.SUMA, yyline, yycolumn,yytext());
+            { return new Symbol(sym.SUMA, yyline, yycolumn,yytext());
             } 
             // fall through
           case 37: break;
           case 12: 
-            { System.out.println(yytext()+" - PREGUNTA"); return new Symbol(sym.PREGUNTA, yyline, yycolumn,yytext());
+            { return new Symbol(sym.PREGUNTA, yyline, yycolumn,yytext());
             } 
             // fall through
           case 38: break;
           case 13: 
-            { System.out.println(yytext()+" - PORCENTAJE"); return new Symbol(sym.PORCENTAJE, yyline, yycolumn,yytext());
+            { return new Symbol(sym.PORCENTAJE, yyline, yycolumn,yytext());
             } 
             // fall through
           case 39: break;
           case 14: 
-            { System.out.println(yytext()+" - PUNTO_COMA"); return new Symbol(sym.PUNTO_COMA, yyline, yycolumn,yytext());
+            { return new Symbol(sym.PUNTO_COMA, yyline, yycolumn,yytext());
             } 
             // fall through
           case 40: break;
@@ -716,12 +716,12 @@ public class Lexico implements java_cup.runtime.Scanner {
             // fall through
           case 41: break;
           case 16: 
-            { System.out.println(yytext()+" - ASCII"); return new Symbol(sym.ASCII, yyline, yycolumn,yytext());
+            { return new Symbol(sym.ASCII, yyline, yycolumn,yytext());
             } 
             // fall through
           case 42: break;
           case 17: 
-            { System.out.println(yytext()+" - NOMBRE"); return new Symbol(sym.NOMBRE, yyline, yycolumn,yytext());
+            { return new Symbol(sym.NOMBRE, yyline, yycolumn,yytext());
             } 
             // fall through
           case 43: break;
@@ -731,42 +731,42 @@ public class Lexico implements java_cup.runtime.Scanner {
             // fall through
           case 44: break;
           case 19: 
-            { System.out.println(yytext()+" - ENTERO"); return new Symbol(sym.ENTERO, yyline, yycolumn,yytext());
+            { return new Symbol(sym.ENTERO, yyline, yycolumn,yytext());
             } 
             // fall through
           case 45: break;
           case 20: 
-            { System.out.println(yytext()+" - IDENTIFICADOR"); return new Symbol(sym.IDENTIFICADOR, yyline, yycolumn,yytext());
+            { return new Symbol(sym.IDENTIFICADOR, yyline, yycolumn,yytext());
             } 
             // fall through
           case 46: break;
           case 21: 
-            { System.out.println(yytext()+" - CARACTER"); return new Symbol(sym.CARACTER, yyline, yycolumn,yytext());
+            { return new Symbol(sym.CARACTER, yyline, yycolumn,yytext());
             } 
             // fall through
           case 47: break;
           case 22: 
-            { System.out.println(yytext()+" - COMENTARIO");/*Comentario de una linea ignorado*/
+            { /*Comentario de una linea ignorado*/
             } 
             // fall through
           case 48: break;
           case 23: 
-            { System.out.println(yytext()+" - FLECHA"); return new Symbol(sym.FLECHA, yyline, yycolumn,yytext());
+            { return new Symbol(sym.FLECHA, yyline, yycolumn,yytext());
             } 
             // fall through
           case 49: break;
           case 24: 
-            { System.out.println(yytext()+" - CADENA"); return new Symbol(sym.CADENA, yyline, yycolumn,yytext());
+            { return new Symbol(sym.CADENA, yyline, yycolumn,yytext());
             } 
             // fall through
           case 50: break;
           case 25: 
-            { System.out.println(yytext()+" - RCONJ"); return new Symbol(sym.RCONJ, yyline, yycolumn,yytext());
+            { return new Symbol(sym.RCONJ, yyline, yycolumn,yytext());
             } 
             // fall through
           case 51: break;
           case 26: 
-            { System.out.println(yytext()+" - COMENTARIO_MAS");/*Comentario mas de una linea ignorado*/
+            { /*Comentario mas de una linea ignorado*/
             } 
             // fall through
           case 52: break;
