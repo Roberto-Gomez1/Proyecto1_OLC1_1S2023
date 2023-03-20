@@ -12,8 +12,8 @@ CONJ: letra -  > a~z;
 CONJ: digito -  > 0~9; 
 
 //                       ----DEFINIENDO EXPRESIONES----
-//frase -> ."C"."O"."M"."P"."I"."1" ? + | | {letra} {digito} " ";
-cadena  -   > . \' . + | | | | \n {minus} {mayus} {digito} " " \';
+frase -> ."C"."O"."M"."P"."I"."1" ? + | | {letra} {digito} " ";
+//cadena  -   > . \' . + | | | | \n {minus} {mayus} {digito} " " \';
 %%
 %%
 cadena : "\'cadena entre comilla simple\'"; //bueno

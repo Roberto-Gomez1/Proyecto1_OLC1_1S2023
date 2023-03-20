@@ -1,12 +1,12 @@
 package Analizadores;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Automata {
     private Nodo_binario arbol_expresion;
-    private ArrayList<Tabla> p_tabla = new ArrayList<>();
+    private ArrayList<Trans> transiciones = new ArrayList<>();
+    private ArrayList<Tabla> estados = new ArrayList<>();
     private ArrayList<Tabla> aux_tabla = new ArrayList<>();
     private ArrayList<Tabla> aux_nombre = new ArrayList<>();
 
@@ -26,18 +26,22 @@ public class Automata {
         metodo(this.arbol_expresion);
         aa= "";
         System.out.println("digraph G {\n"+crear_arbol(this.arbol_expresion,conteo)+"}");
-        //System.out.println("---------------------------------------");
-
+        this.estados.add(new Tabla(this.arbol_expresion.getPrimeros(),"S0",this.arbol_expresion.getUltimos()));
         tabla_siguientes();
+        System.out.println(aa);
+        contador=0;
+        aa="";
+        tabla_trans();
         System.out.println(aa);
         contador=0;
     }
     public void tabla_siguientes (){
-
+        //this.estados.add(new Tabla(this.aux_tabla.get(0).getNumero(),"S1",this.aux_tabla.get(0).getSiguiente()));
+        //disyuncion de primeros
         for (int i=0;i<this.aux_tabla.size();i++){
             Tabla hola = this.aux_tabla.get(i);
             ArrayList<Integer> numero = hola.getNumero();
-            //System.out.println(numero.size());
+
             if (numero.size() >1){
                 this.aux_tabla.remove(i);
                 for(Integer num: numero){
@@ -47,7 +51,7 @@ public class Automata {
                 }
             }
         }
-
+        //concatenacion de siugientes
         for (int i=0; i<this.aux_tabla.size();i++){
             ArrayList<Integer> numero = this.aux_tabla.get(i).getNumero();
             for(int j=i+1; j<this.aux_tabla.size();j++){
@@ -59,7 +63,7 @@ public class Automata {
                 }
             }
         }
-
+        //ordenamiento de siguientes
         for (int i=0;i<this.aux_nombre.size();i++){
             ArrayList<Integer> numero = this.aux_nombre.get(i).getNumero();
             for (int j=0;j<this.aux_tabla.size();j++){
@@ -68,18 +72,51 @@ public class Automata {
                     this.aux_tabla.remove(j);
                     Integer [] arreglo = hola.getSiguiente().toArray(new Integer[0]);
                     Arrays.sort(arreglo);
-                    ArrayList<Integer> aaa = new ArrayList<Integer>(Arrays.asList(arreglo));
-                    this.aux_tabla.add(j, new Tabla(hola.getNumero(),this.aux_nombre.get(i).getLexema(),aaa));
+                    ArrayList<Integer> auxilio = new ArrayList<Integer>(Arrays.asList(arreglo));
+                    this.aux_tabla.add(j, new Tabla(hola.getNumero(),this.aux_nombre.get(i).getLexema(),auxilio));
                 }
             }
         }
 
-        Tabla hola = this.aux_tabla.get(0);
-        this.aux_tabla.remove(0);
-        this.aux_tabla.add(hola);
+        //ordenamiento
+        for (int i =0;i<this.aux_tabla.size()-1;i++){
+            for (int j =0;j<this.aux_tabla.size()-i-1;j++){
+                Tabla hola = this.aux_tabla.get(j);
+                ArrayList<Integer> numero = hola.getNumero();
+                int mmm = numero.get(0);
+                Tabla hola1 = this.aux_tabla.get(j+1);
+                ArrayList<Integer> numero1 = hola1.getNumero();
+                int mmm1 = numero1.get(0);
+                if(mmm>mmm1){
+                    this.aux_tabla.remove(j);
+                    this.aux_tabla.add(j, hola1);
+                    this.aux_tabla.remove(j+1);
+                    this.aux_tabla.add(j+1,hola);
+                }
+            }
+        }
+        for (int i = 0; i < this.aux_tabla.size(); i++) {
+            Tabla numero = this.aux_tabla.get(i);
+            boolean duplicado = false;
+            for (int j = i + 1; j < this.aux_tabla.size(); j++) {
+                Tabla hola = this.aux_tabla.get(j);
+                if (numero.getSiguiente().equals(hola.getSiguiente())) {
+                    duplicado = true;
+                    break;
+                }
+            }
+            if (!duplicado) {
+                String mm = "S" + contador;
+                this.estados.add(new Tabla(numero.getNumero(), mm, numero.getSiguiente()));
+                contador++;
+            }
+        }
+        contador=1;
+
+
 
         ArrayList<Integer> le = new ArrayList<>();
-        this.aux_tabla.add(new Tabla(le,"#",le));
+        this.aux_tabla.add(new Tabla(this.aux_nombre.get(this.aux_nombre.size()-1).getNumero(),this.aux_nombre.get(this.aux_nombre.size()-1).getLexema(),le));
 
         aa +=  "digraph G{\n"
                 + "graph [ratio=fill];\n"
@@ -97,12 +134,88 @@ public class Automata {
                     + "<TD>"+este.getLexema()+"</TD>\n"
                     + "<TD>"+este.getSiguiente()+"</TD></TR>\n";
             contador++;
-            System.out.println("2 Primeros: "+este.getNumero() +" Lexema: "+este.getLexema()+ " Siguientes: "+este.getSiguiente());
         }
         aa+="</TABLE>>];\n}";
     }
-    public void tabla_trans(){
+    public void tabla_trans() {
+
+        for (int i = 0; i < this.estados.size(); i++) {
+            Tabla hola = this.estados.get(i);
+            ArrayList<Integer> numero = hola.getSiguiente();
+            if (numero.size() > 1) {
+                for (Integer num : numero) {
+                    ArrayList<Integer> lista = new ArrayList<Integer>();
+                    lista.add(num);
+                    this.transiciones.add(new Trans(lista, hola.getLexema(), "", lista, ""));
+                }
+            } else {
+                Trans nose = new Trans(hola.getNumero(), hola.getLexema(), "", hola.getSiguiente(), "");
+                if (!hola.getNumero().equals(nose.getInicial()) && hola.getSiguiente().equals(nose.getSiguientes())) {
+                    this.transiciones.add(nose);
+                } else if (i == 0) {
+                    this.transiciones.add(nose);
+                }
+            }
+        }
+
+        for (int i = 0; i < this.transiciones.size(); i++) {
+            Trans numero = this.transiciones.get(i);
+            for (int j = 0; j < this.aux_nombre.size(); j++) {
+                Tabla hola = this.aux_nombre.get(j);
+                for (int k = 0; k < this.aux_tabla.size(); k++) {
+                    Tabla queso = this.aux_tabla.get(k);
+                    if (numero.getInicial().equals(hola.getNumero()) && numero.getInicial().equals(queso.getNumero())) {
+                        this.transiciones.remove(i);
+                        this.transiciones.add(i, new Trans(numero.getInicial(), numero.getEstado_inicial(), hola.getLexema(), queso.getSiguiente(), numero.getEstado_final()));
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < this.transiciones.size(); i++) {
+            Trans numero = this.transiciones.get(i);
+            for (int j = 0; j < this.estados.size(); j++) {
+                Tabla hola = this.estados.get(j);
+                if (numero.getSiguientes().equals(hola.getSiguiente())) {
+                    this.transiciones.remove(i);
+                    this.transiciones.add(i, new Trans(numero.getInicial(), numero.getEstado_inicial(), numero.getLexema(), numero.getSiguientes(), hola.getLexema()));
+                }
+            }
+        }
         
+        aa += "digraph G{\n" +
+                "graph [ratio=fill];\n" +
+                "node [label=\"\\N\", fontsize=15, shape=plaintext];\n" +
+                "graph [bb=\"0,0,352,154\"];\n" +
+                "arset [label=<\n" +
+                "<TABLE ALIGN=\"LEFT\">\n" +
+                "<TR><TD bgcolor=\"lemonchiffon4\">Estado</TD>\n";
+        for (int i = 0; i < this.aux_tabla.size(); i++) {
+            aa += "<TD bgcolor =\"lemonchiffon4\"> " + this.aux_tabla.get(i).getLexema() + "</TD>\n";
+        }
+        aa += "</TR>\n";
+        int total = this.estados.size()+this.aux_nombre.size();
+        int temporal=0;
+        for (int i = 0; i < this.estados.size(); i++) {
+        int temp= temporal;
+        aa += "<TR><TD bgcolor=\"lemonchiffon4\">" + this.estados.get(i).getLexema() + "</TD>\n";
+            for (int j = 0; j < this.aux_nombre.size(); j++) {
+                if(this.estados.get(i).getLexema().equals(this.transiciones.get(temp).getEstado_inicial()) && this.transiciones.get(temp).getLexema().equals(this.aux_nombre.get(j).getLexema())){
+                    aa +="<TD>"+this.transiciones.get(temp).getEstado_final()+"</TD>\n";
+                    if(temp <=total-2) {
+                        temp++;
+                    }
+                    temporal=temp;
+                } else if (!this.estados.get(i).getLexema().equals(this.transiciones.get(temp).getEstado_inicial()) || !this.transiciones.get(temp).getLexema().equals(this.aux_nombre.get(j).getLexema())) {
+                    aa +="<TD>--</TD>\n";
+
+                    }
+                if(temp%total==0 && temp >1) {
+                    temp += 1;
+                }
+                }
+            aa += "</TR>\n";
+        }
+        aa += "</TABLE>>];\n}";
     }
     public void metodo (Nodo_binario aux){
         if (aux ==null){
