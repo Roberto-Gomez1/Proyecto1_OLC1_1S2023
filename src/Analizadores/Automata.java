@@ -34,6 +34,9 @@ public class Automata {
         tabla_trans();
         System.out.println(aa);
         contador=0;
+        aa="";
+        afd();
+        System.out.println(aa);
     }
     public void tabla_siguientes (){
         //this.estados.add(new Tabla(this.aux_tabla.get(0).getNumero(),"S1",this.aux_tabla.get(0).getSiguiente()));
@@ -224,6 +227,26 @@ public class Automata {
             aa += "</TR>\n";
         }
         aa += "</TABLE>>];\n}";
+    }
+    public void afd() {
+        aa += "digraph G {\nrankdir=LR;\n";
+        for (int i = 0; i < this.estados.size(); i++) {
+            if(i==this.estados.size()-1) {
+                aa+=this.estados.get(i).getLexema()+"[shape=doublecircle];\n";
+            }else{
+                aa+=this.estados.get(i).getLexema()+"[shape=circle];\n";
+            }
+        }
+        for(int i=0;i<this.transiciones.size();i++){
+            if(!this.transiciones.get(i).getLexema().equals("#")){
+                String label = this.transiciones.get(i).getLexema().replaceAll("\"", "\\\\\"");
+                aa+=this.transiciones.get(i).getEstado_inicial()+" -> "+this.transiciones.get(i).getEstado_final()+" [label=\""+label+"\"];\n";
+            }
+        }
+        aa+="}";
+    }
+    public void afnd(){
+
     }
     public void metodo (Nodo_binario aux){
         if (aux ==null){
