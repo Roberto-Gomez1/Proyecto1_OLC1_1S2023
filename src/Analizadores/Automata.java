@@ -141,7 +141,7 @@ public class Automata {
 
         for (int i = 0; i < this.estados.size(); i++) {
             Tabla hola = this.estados.get(i);
-            ArrayList<Integer> numero = hola.getSiguiente();
+            ArrayList<Integer> numero = (i == 0) ? hola.getNumero() : hola.getSiguiente();
             if (numero.size() > 1) {
                 for (Integer num : numero) {
                     ArrayList<Integer> lista = new ArrayList<Integer>();
@@ -149,14 +149,22 @@ public class Automata {
                     this.transiciones.add(new Trans(lista, hola.getLexema(), "", lista, ""));
                 }
             } else {
-                Trans nose = new Trans(hola.getNumero(), hola.getLexema(), "", hola.getSiguiente(), "");
-                if (!hola.getNumero().equals(nose.getInicial()) && hola.getSiguiente().equals(nose.getSiguientes())) {
-                    this.transiciones.add(nose);
-                } else if (i == 0) {
+                ArrayList<Integer> lista = new ArrayList<Integer>();
+                lista.add(numero.get(0));
+                Trans nose = new Trans(lista, hola.getLexema(), "", lista, "");
+                boolean addTransition = true;
+                for (Trans t : this.transiciones) {
+                    if (t.getInicial().equals(nose.getInicial()) && t.getSiguientes().equals(nose.getSiguientes())) {
+                        addTransition = false;
+                        break;
+                    }
+                }
+                if (addTransition) {
                     this.transiciones.add(nose);
                 }
             }
         }
+
 
         for (int i = 0; i < this.transiciones.size(); i++) {
             Trans numero = this.transiciones.get(i);
