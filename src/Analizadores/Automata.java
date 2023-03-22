@@ -1,5 +1,10 @@
 package Analizadores;
 
+import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -11,6 +16,7 @@ public class Automata {
     private ArrayList<Tabla> aux_nombre = new ArrayList<>();
 
     private int conteo = 1;
+    private int contador_arbol,contador_siguientes,contador_transiciones,contador_afd,contador_afnd,contador_html =1;
     private int contador = 1;
     private String aa = "";
     public Automata(Nodo_binario arbol_expresion) {
@@ -25,18 +31,17 @@ public class Automata {
         conteo=0;
         metodo(this.arbol_expresion);
         aa= "";
-        System.out.println("digraph G {\n"+crear_arbol(this.arbol_expresion,conteo)+"}");
+        String cadena= "digraph G {\n"+crear_arbol(this.arbol_expresion,conteo)+"}";
+        generar(cadena);
         this.estados.add(new Tabla(this.arbol_expresion.getPrimeros(),"S0",this.arbol_expresion.getUltimos()));
         tabla_siguientes();
-        System.out.println(aa);
         contador=0;
         aa="";
         tabla_trans();
-        System.out.println(aa);
         contador=0;
         aa="";
         afd();
-        System.out.println(aa);
+        ingresar_error();
     }
     public void tabla_siguientes (){
         //this.estados.add(new Tabla(this.aux_tabla.get(0).getNumero(),"S1",this.aux_tabla.get(0).getSiguiente()));
@@ -139,6 +144,42 @@ public class Automata {
             contador++;
         }
         aa+="</TABLE>>];\n}";
+
+        FileWriter fichero = null;
+        try {
+            File directory = new File("Imagenes\\SIGUIENTES_202000544");
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            File file = new File("Imagenes\\SIGUIENTES_202000544\\TablaSiguientes" + contador_siguientes + ".dot");
+            while (file.exists()) {
+                contador_siguientes++;
+                file = new File("Imagenes\\SIGUIENTES_202000544\\TablaSiguientes" + contador_siguientes + ".dot");
+            }
+            fichero = new FileWriter(file);
+            PrintWriter pw = null;
+            pw = new PrintWriter(fichero);
+            pw.println(aa);
+            pw.close();
+            try {
+                ProcessBuilder proceso;
+                proceso = new ProcessBuilder("dot", "-Tjpg", "-o", "Imagenes\\SIGUIENTES_202000544\\TablaSiguientes"+contador_siguientes+".jpg", "Imagenes\\SIGUIENTES_202000544\\TablaSiguientes"+contador_siguientes+".dot");
+                proceso.start();
+                contador_siguientes++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
     }
     public void tabla_trans() {
 
@@ -208,7 +249,11 @@ public class Automata {
         int temporal=0;
         for (int i = 0; i < this.estados.size(); i++) {
         int temp= temporal;
-        aa += "<TR><TD bgcolor=\"lemonchiffon4\">" + this.estados.get(i).getLexema() + "</TD>\n";
+        if(i==0) {
+            aa += "<TR><TD bgcolor=\"lemonchiffon4\">" + this.estados.get(i).getLexema() + " " + this.estados.get(i).getNumero() + "</TD>\n";
+        }else{
+            aa += "<TR><TD bgcolor=\"lemonchiffon4\">" + this.estados.get(i).getLexema() + " " + this.estados.get(i).getSiguiente() + "</TD>\n";
+        }
             for (int j = 0; j < this.aux_nombre.size(); j++) {
                 if(this.estados.get(i).getLexema().equals(this.transiciones.get(temp).getEstado_inicial()) && this.transiciones.get(temp).getLexema().equals(this.aux_nombre.get(j).getLexema())){
                     aa +="<TD>"+this.transiciones.get(temp).getEstado_final()+"</TD>\n";
@@ -227,6 +272,41 @@ public class Automata {
             aa += "</TR>\n";
         }
         aa += "</TABLE>>];\n}";
+        FileWriter fichero = null;
+        try {
+            File directory = new File("Imagenes\\TRANSICIONES_202000544");
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            File file = new File("Imagenes\\TRANSICIONES_202000544\\TablaTransiciones" + contador_transiciones + ".dot");
+            while (file.exists()) {
+                contador_transiciones++;
+                file = new File("Imagenes\\TRANSICIONES_202000544\\TablaTransiciones" + contador_transiciones + ".dot");
+            }
+            fichero = new FileWriter(file);
+            PrintWriter pw = null;
+            pw = new PrintWriter(fichero);
+            pw.println(aa);
+            pw.close();
+            try {
+                ProcessBuilder proceso;
+                proceso = new ProcessBuilder("dot", "-Tjpg", "-o", "Imagenes\\TRANSICIONES_202000544\\TablaTransiciones"+contador_transiciones+".jpg", "Imagenes\\TRANSICIONES_202000544\\TablaTransiciones"+contador_transiciones+".dot");
+                proceso.start();
+                contador_transiciones++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
     }
     public void afd() {
         aa += "digraph G {\nrankdir=LR;\n";
@@ -244,9 +324,155 @@ public class Automata {
             }
         }
         aa+="}";
+        FileWriter fichero = null;
+        try {
+            File directory = new File("Imagenes\\AFD_202000544");
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            File file = new File("Imagenes\\AFD_202000544\\AFD" + contador_afd + ".dot");
+            while (file.exists()) {
+                contador_afd++;
+                file = new File("Imagenes\\AFD_202000544\\AFD" + contador_afd + ".dot");
+            }
+            fichero = new FileWriter(file);
+            PrintWriter pw = null;
+            pw = new PrintWriter(fichero);
+            pw.println(aa);
+            pw.close();
+            try {
+                ProcessBuilder proceso;
+                proceso = new ProcessBuilder("dot", "-Tjpg", "-o", "Imagenes\\AFD_202000544\\AFD" + contador_afd + ".jpg", "Imagenes\\AFD_202000544\\AFD" + contador_afd + ".dot");
+                proceso.start();
+                contador_afd++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
     }
     public void afnd(){
 
+    }
+    public void ingresar_error(){
+        if(Lexico.errores.isEmpty()) {
+            String cadena = "";
+            cadena += "<!DOCTYPE html>\n" +
+                    "<html>\n" +
+                    "<head><title>Reporte de Errores</title><style>\n      " +
+                    "table {\n" +
+                    "border-collapse: collapse;\n" +
+                    "width: 100%;\n" +
+                    "}\n" +
+                    "th, td {\n" +
+                    "text-align: left;\n" +
+                    "padding: 8px;\n" +
+                    "border: 1px solid black;\n" +
+                    "}\n" +
+                    "th {\n" +
+                    "background-color: #dddddd;\n" +
+                    "}\n" +
+                    "</style>\n" +
+                    "</head>\n" +
+                    "<body>\n" +
+                    "<table>\n" +
+                    "<caption>Reporte de Errores Léxicos</caption>\n" +
+                    "<thead>\n" +
+                    "<tr>\n" +
+                    "<th>Numero</th>\n" +
+                    "<th>Tipo de Error</th>\n" +
+                    "<th>Descripcion</th>\n" +
+                    "<th>Fila</th>\n" +
+                    "<th>Columna</th>\n" +
+                    "</tr>\n" +
+                    "</thead>\n" +
+                    "<tbody>\n";
+            int con_aux = 1;
+            for (int i = 0; i < Lexico.errores.size(); i++) {
+                cadena += "<tr><td>" + con_aux + "</td>\n";
+                cadena += "<td>" + Lexico.errores.get(i).getTipo() + "</td>\n";
+                cadena += "<td>" + Lexico.errores.get(i).getDescripcion() + "</td>\n";
+                cadena += "<td>" + Lexico.errores.get(i).getFila() + "</td>\n";
+                cadena += "<td>" + Lexico.errores.get(i).getColumna() + "</td></tr>\n";
+                con_aux++;
+            }
+            cadena += "</tbody>\n" +
+                    "</table>\n" +
+                    "</body>\n" +
+                    "</html>";
+            try {
+                // Crear archivo HTML
+                File directory = new File("Imagenes\\ERRORES_202000544");
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+                File file = new File("Imagenes\\ERRORES_202000544\\Reporte" + contador_html + ".html");
+                while (file.exists()) {
+                    contador_html++;
+                    file = new File("Imagenes\\ERRORES_202000544\\Reporte" + contador_html + ".html");
+                }
+                FileWriter fichero = new FileWriter(file);
+                PrintWriter pw = new PrintWriter(fichero);
+                pw.println(cadena);
+                pw.close();
+
+                // Abrir archivo HTML en el navegador por defecto
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().browse(file.toURI());
+                }
+
+                contador_afd++;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+    public void generar(String cadena){
+        FileWriter fichero = null;
+        try {
+            File directory = new File("Imagenes\\ARBOLES_202000544");
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            File file = new File("Imagenes\\ARBOLES_202000544\\Arboles" + contador_arbol + ".dot");
+            while (file.exists()) {
+                contador_arbol++;
+                file = new File("Imagenes\\ARBOLES_202000544\\Arboles" + contador_arbol + ".dot");
+            }
+            fichero = new FileWriter(file);
+            PrintWriter pw = null;
+            pw = new PrintWriter(fichero);
+            pw.println(cadena);
+            pw.close();
+            try {
+                ProcessBuilder proceso;
+                proceso = new ProcessBuilder("dot", "-Tjpg", "-o", "Imagenes\\ARBOLES_202000544\\Arboles"+contador_arbol+".jpg", "Imagenes\\ARBOLES_202000544\\Arboles"+contador_arbol+".dot");
+                proceso.start();
+                contador_arbol++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
     }
     public void metodo (Nodo_binario aux){
         if (aux ==null){

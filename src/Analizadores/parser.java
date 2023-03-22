@@ -477,6 +477,7 @@ class CUP$parser$actions {
 		
                             Nodo_binario hoja = new Nodo_binario(a);
                             hoja.setHoja(true);
+                            hoja.setAnulable(false);
                             RESULT = hoja;
                       
               CUP$parser$result = parser.getSymbolFactory().newSymbol("expresion",7, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
@@ -493,6 +494,7 @@ class CUP$parser$actions {
 		
                         Nodo_binario hoja = new Nodo_binario(a);
                         hoja.setHoja(true);
+                        hoja.setAnulable(false);
                         RESULT = hoja;
                         
               CUP$parser$result = parser.getSymbolFactory().newSymbol("expresion",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);

@@ -2,6 +2,8 @@
 
 package Analizadores;
 import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+
 
 
 /**
@@ -251,6 +253,7 @@ public class Lexico implements java_cup.runtime.Scanner {
   private int zzFinalHighSurrogate = 0;
 
   /* user code: */
+public static ArrayList<Errores> errores= new ArrayList<>();
     //Código de usuario
 
 
@@ -641,6 +644,7 @@ public class Lexico implements java_cup.runtime.Scanner {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { String errLex = "Error léxico : '"+yytext()+"' en la línea: "+(yyline+1)+" y columna: "+(yycolumn+1);
+        errores.add(new Errores("Lexico", "El caracter: "+yytext()+" no pertenece al lenguaje",(yyline+1) , (yycolumn+1)));
         System.out.println(errLex);
             } 
             // fall through

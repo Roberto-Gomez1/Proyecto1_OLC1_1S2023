@@ -16,7 +16,7 @@ CONJ: digito -  > 0~9;
 cadena  -   > . \' . + | | | | \n {minus} {mayus} {digito} " " \';
 %%
 %%
-cadena : "\'cadena entre comilla simple\'"; //bueno
+//cadena : "\'cadena entre comilla simple\'"; //bueno
 frase : "COMPI1 sale con 100"; // bueno
 }
 

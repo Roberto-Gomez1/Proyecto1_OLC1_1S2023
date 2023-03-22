@@ -1,9 +1,12 @@
 package Analizadores;
 import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+
 
 %%
 
 %{
+public static ArrayList<Errores> errores= new ArrayList<>();
     //Código de usuario
 %}
 
@@ -79,5 +82,6 @@ FLECHA = "-" {SPACE}* ">"
 
 <YYINITIAL> . {
         String errLex = "Error léxico : '"+yytext()+"' en la línea: "+(yyline+1)+" y columna: "+(yycolumn+1);
+        errores.add(new Errores("Lexico", "El caracter: "+yytext()+" no pertenece al lenguaje",(yyline+1) , (yycolumn+1)));
         System.out.println(errLex);
 }
