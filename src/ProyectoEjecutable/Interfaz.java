@@ -163,9 +163,10 @@ public class Interfaz extends JFrame{
         public void actionPerformed(ActionEvent e) {
             JFileChooser filec = new JFileChooser();
             filec.showOpenDialog(null);
-            generar_imagen = filec.getSelectedFile();
-            ImageIcon icono = new ImageIcon(generar_imagen.getAbsolutePath());
-            imagen.setIcon(icono);
+            File generar_imagen = filec.getSelectedFile();
+            if (generar_imagen != null) {
+                imagen.setIcon(new ImageIcon(generar_imagen.getAbsolutePath()));
+            }
         }
     };
     private void AreaTexto(){
