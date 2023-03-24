@@ -1,0 +1,43 @@
+digraph G{
+graph [ratio=fill];
+node [label="\N", fontsize=15, shape=plaintext];
+graph [bb="0,0,352,154"];
+arset [label=<
+<TABLE ALIGN="LEFT">
+<TR><TD colspan="2"  bgcolor="lemonchiffon4">Hoja</TD>
+<TD bgcolor="lemonchiffon4">Siguientes</TD></TR>
+<TR><TD> Numero </TD>
+<TD> Lexema</TD>
+<TD> Siguiente </TD></TR>
+<TR><TD>1</TD>
+<TD>"C"</TD>
+<TD>[2]</TD></TR>
+<TR><TD>2</TD>
+<TD>"O"</TD>
+<TD>[3]</TD></TR>
+<TR><TD>3</TD>
+<TD>"M"</TD>
+<TD>[4]</TD></TR>
+<TR><TD>4</TD>
+<TD>"P"</TD>
+<TD>[5]</TD></TR>
+<TR><TD>5</TD>
+<TD>"I"</TD>
+<TD>[6]</TD></TR>
+<TR><TD>6</TD>
+<TD>"1"</TD>
+<TD>[6, 7, 8, 9, 10]</TD></TR>
+<TR><TD>7</TD>
+<TD>letra</TD>
+<TD>[6, 7, 8, 9, 10]</TD></TR>
+<TR><TD>8</TD>
+<TD>digito</TD>
+<TD>[6, 7, 8, 9, 10]</TD></TR>
+<TR><TD>9</TD>
+<TD>" "</TD>
+<TD>[6, 7, 8, 9, 10]</TD></TR>
+<TR><TD>10</TD>
+<TD>#</TD>
+<TD>[]</TD></TR>
+</TABLE>>];
+}

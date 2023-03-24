@@ -1,0 +1,35 @@
+digraph G {
+rankdir=LR;
+S0[shape=circle];
+S1[shape=circle];
+S2[shape=circle];
+S3[shape=circle];
+S4[shape=circle];
+S5[shape=circle];
+S6[shape=circle];
+S7[shape=circle];
+S8[shape=circle];
+S9[shape=circle];
+S10[shape=circle];
+S11[shape=circle];
+S12[shape=circle];
+S13[shape=circle];
+S14[shape=circle];
+S15[shape=circle];
+S16[shape=circle];
+S17[shape=circle];
+S18[shape=circle];
+S19[shape=circle];
+S20[shape=circle];
+S21[shape=doublecircle];
+S3 -> S4 [label="\"C\""];
+S5 -> S6 [label="\"O\""];
+S7 -> S8 [label="\"M\""];
+S9 -> S10 [label="\"P\""];
+S11 -> S12 [label="\"I\""];
+S13 -> S14 [label="\"1\""];
+S15 -> S15 [label="e"];
+S16 -> S16 [label="+"];
+S17 -> S14 [label="e"];
+S17 -> S18 [label="e"];
+}
