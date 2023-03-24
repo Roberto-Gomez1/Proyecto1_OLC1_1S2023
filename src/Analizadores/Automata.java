@@ -11,10 +11,12 @@ import java.util.Arrays;
 public class Automata {
     private Nodo_binario arbol_expresion;
     private ArrayList<Trans> transiciones = new ArrayList<>();
+    private ArrayList<Trans> grafico_afnd = new ArrayList<>();
     private ArrayList<Tabla> estados = new ArrayList<>();
+    private ArrayList<Tabla> estados_afnd= new ArrayList<>();
     private ArrayList<Tabla> aux_tabla = new ArrayList<>();
     private ArrayList<Tabla> aux_nombre = new ArrayList<>();
-
+    private int p_afnd=0;
     private int conteo = 1;
     private int contador_arbol,contador_siguientes,contador_transiciones,contador_afd,contador_afnd,contador_html =1;
     private int contador = 1;
@@ -32,6 +34,7 @@ public class Automata {
         metodo(this.arbol_expresion);
         aa= "";
         String cadena= "digraph G {\n"+crear_arbol(this.arbol_expresion,conteo)+"}";
+        p_afnd=0;
         generar(cadena);
         this.estados.add(new Tabla(this.arbol_expresion.getPrimeros(),"S0",this.arbol_expresion.getUltimos()));
         tabla_siguientes();
@@ -42,6 +45,8 @@ public class Automata {
         aa="";
         afd();
         ingresar_error();
+        aa="";
+        afnd();
     }
     public void tabla_siguientes (){
         //this.estados.add(new Tabla(this.aux_tabla.get(0).getNumero(),"S1",this.aux_tabla.get(0).getSiguiente()));
@@ -361,7 +366,71 @@ public class Automata {
         }
     }
     public void afnd(){
+        aa += "digraph G {\nrankdir=LR;\n";
+        for (int i = 0; i < this.estados_afnd.size(); i++) {
+            if(i==this.estados_afnd.size()-1) {
+                aa+=this.estados_afnd.get(i).getLexema()+"[shape=doublecircle];\n";
+            }else{
+                aa+=this.estados_afnd.get(i).getLexema()+"[shape=circle];\n";
+            }
+        }
+        int extra =0;
+        int fin =0;
+        for(int i=0;i<this.grafico_afnd.size();i++){
+            if(!this.grafico_afnd.get(i).getLexema().equals("#")) {
+                String label = this.grafico_afnd.get(i).getLexema().replaceAll("\"", "\\\\\"");
+                if (this.grafico_afnd.get(i).getInicial().size()== 2 && i < this.grafico_afnd.size()-1) {
+                    int j=i+1;
+                    aa += this.grafico_afnd.get(i).getEstado_final() + " -> " + this.grafico_afnd.get(j).getEstado_inicial() + " [label=\"" + label + "\"];\n";
+                }else if(this.grafico_afnd.get(i).getInicial().size()== 3) {
+                    aa += this.grafico_afnd.get(i).getEstado_inicial() + " -> " + this.grafico_afnd.get(extra).getEstado_inicial() + " [label=\"" + label + "\"];\n";
+                    aa += this.grafico_afnd.get(extra).getEstado_final() + " -> " + this.grafico_afnd.get(fin).getEstado_inicial() + " [label=\"" + label + "\"];\n";
+                }else if(this.grafico_afnd.get(i).getInicial().size()== 4){
+                        fin =i;
 
+                }else if(this.grafico_afnd.get(i).getInicial().size()== 5) {
+                    extra = i;
+                }else{
+                    aa += this.grafico_afnd.get(i).getEstado_inicial() + " -> " + this.grafico_afnd.get(i).getEstado_final() + " [label=\"" + label + "\"];\n";
+                }
+            }
+        }
+        aa+="}";
+        FileWriter fichero = null;
+        try {
+            File directory = new File("Imagenes\\AFND_202000544");
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            File file = new File("Imagenes\\AFND_202000544\\AFND" + contador_afnd + ".dot");
+            while (file.exists()) {
+                contador_afnd++;
+                file = new File("Imagenes\\AFND_202000544\\AFND" + contador_afnd + ".dot");
+            }
+            fichero = new FileWriter(file);
+            PrintWriter pw = null;
+            pw = new PrintWriter(fichero);
+            pw.println(aa);
+            pw.close();
+            try {
+                ProcessBuilder proceso;
+                proceso = new ProcessBuilder("dot", "-Tjpg", "-o", "Imagenes\\AFND_202000544\\AFND" + contador_afnd + ".jpg", "Imagenes\\AFND_202000544\\AFND" + contador_afnd + ".dot");
+                proceso.start();
+                contador_afnd++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
     }
     public void ingresar_error(){
         if(Lexico.errores.isEmpty()) {
@@ -424,11 +493,6 @@ public class Automata {
                 PrintWriter pw = new PrintWriter(fichero);
                 pw.println(cadena);
                 pw.close();
-
-                // Abrir archivo HTML en el navegador por defecto
-                if (Desktop.isDesktopSupported()) {
-                    Desktop.getDesktop().browse(file.toURI());
-                }
 
                 contador_afd++;
             } catch (IOException e) {
@@ -562,27 +626,195 @@ public class Automata {
             lista.add(num);
             Tabla nuevo = new Tabla(lista,actual.getDato(),actual.getUltimos());
             this.aux_nombre.add(nuevo);
-        }else{
-            graficar+= "N_"+aux+"[shape = none label=<\n"
+        }else {
+            graficar += "N_" + aux + "[shape = none label=<\n"
                     + "<TABLE border=\"1\" cellspacing=\"2\" cellpadding=\"10\" > \n"
                     + "<TR>\n"
-                    + "<TD colspan=\"3\">"+actual.isAnulable()+"</TD>\n"
+                    + "<TD colspan=\"3\">" + actual.isAnulable() + "</TD>\n"
                     + "</TR>\n"
                     + "<TR>\n"
-                    + "<TD >"+actual.getPrimeros()+"</TD>\n"
-                    + "<TD >" + actual.getDato() +"</TD>\n"
-                    + "<TD >"+actual.getUltimos()+"</TD>\n"
+                    + "<TD >" + actual.getPrimeros() + "</TD>\n"
+                    + "<TD >" + actual.getDato() + "</TD>\n"
+                    + "<TD >" + actual.getUltimos() + "</TD>\n"
                     + "</TR>\n"
                     + "</TABLE>>];";
-            if(actual.getDato().equals(".")){
-                Tabla nuevo = new Tabla(actual.getHijo_izquierdo().getUltimos(),actual.getDato(),actual.getHijo_derecho().getPrimeros());
+            if (actual.getDato().equals(".")) {
+                Tabla nuevo = new Tabla(actual.getHijo_izquierdo().getUltimos(), actual.getDato(), actual.getHijo_derecho().getPrimeros());
+                this.aux_tabla.add(nuevo);
+                if (actual.getHijo_izquierdo().isHoja() || actual.getHijo_derecho().isHoja()) {
+                    ArrayList<Integer> noseq = new ArrayList<>();
+                    if (actual.getHijo_izquierdo().isHoja()) {
+                        noseq.add(actual.getHijo_izquierdo().getCabecera());
+                    } else if (actual.getHijo_derecho().isHoja()) {
+                        noseq.add(actual.getHijo_derecho().getCabecera());
+                    }
+                    this.estados_afnd.add(new Tabla(noseq, "S" + p_afnd, noseq));
+                    int auxiliar1 = p_afnd;
+                    p_afnd++;
+                    this.estados_afnd.add(new Tabla(noseq, "S" + p_afnd, noseq));
+                    int auxiliar2 = p_afnd;
+                    p_afnd++;
+                    if (actual.getHijo_izquierdo().isHoja()) {
+                        noseq.add(1);
+                        this.grafico_afnd.add(new Trans(noseq, "S" + auxiliar1, actual.getHijo_izquierdo().getDato(), actual.getUltimos(), "S" + auxiliar2));
+                    } else if (actual.getHijo_derecho().isHoja()) {
+                        noseq.add(1);
+                        this.grafico_afnd.add(new Trans(noseq, "S" + auxiliar1, actual.getHijo_derecho().getDato(), actual.getUltimos(), "S" + auxiliar2));
+                    }
+
+                } else if (actual.getHijo_izquierdo().isHoja() && actual.getHijo_derecho().isHoja()) {
+                    ArrayList<Integer> noseq1 = new ArrayList<>();
+                    noseq1.add(actual.getHijo_izquierdo().getCabecera());
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    int auxiliar1 = p_afnd;
+                    p_afnd++;
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    int auxiliar2 = p_afnd;
+                    p_afnd++;
+                    this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar1, actual.getHijo_izquierdo().getDato(), actual.getUltimos(), "S" + auxiliar2));
+                    noseq1.add(actual.getHijo_derecho().getCabecera());
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    int auxiliar3 = p_afnd;
+                    p_afnd++;
+                    this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar2, actual.getHijo_derecho().getDato(), actual.getUltimos(), "S" + auxiliar3));
+                }
+
+            } else if (actual.getDato().equals("+") || actual.getDato().equals("*")) {
+                Tabla nuevo = new Tabla(actual.getHijo_izquierdo().getUltimos(), actual.getDato(), actual.getHijo_izquierdo().getPrimeros());
                 this.aux_tabla.add(nuevo);
 
-            }else if (actual.getDato().equals("+") || actual.getDato().equals("*")){
-                Tabla nuevo = new Tabla(actual.getHijo_izquierdo().getUltimos(),actual.getDato(),actual.getHijo_izquierdo().getPrimeros());
-                this.aux_tabla.add(nuevo);
+                if (actual.getDato().equals("+")) {
+                    if (actual.getHijo_izquierdo().isHoja()) {
+                        ArrayList<Integer> noseq1 = new ArrayList<>();
+                        noseq1.add(actual.getHijo_izquierdo().getCabecera());
+                        int auxiliar1 = p_afnd;
+                        this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                        p_afnd++;
+                        int auxiliar2 = p_afnd;
+                        this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                        p_afnd++;
+                        int auxiliar3 = p_afnd;
+                        this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                        p_afnd++;
+                        int auxiliar4 = p_afnd;
+                        this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                        p_afnd++;
+                        this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar1, "e", actual.getUltimos(), "S" + auxiliar2));
+                        this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar2, actual.getHijo_izquierdo().getDato(), actual.getUltimos(), "S" + auxiliar3));
+                        this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar3, "e", actual.getUltimos(), "S" + auxiliar2));
+                        noseq1.add(1);
+                        this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar3, "e", actual.getUltimos(), "S" + auxiliar4));
+                    }
+                } else if (actual.getDato().equals("*")) {
+                    if (actual.getHijo_izquierdo().isHoja()) {
+                        ArrayList<Integer> noseq1 = new ArrayList<>();
+                        noseq1.add(actual.getHijo_izquierdo().getCabecera());
+                        int auxiliar1 = p_afnd;
+                        this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                        p_afnd++;
+                        int auxiliar2 = p_afnd;
+                        this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                        p_afnd++;
+                        int auxiliar3 = p_afnd;
+                        this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                        p_afnd++;
+                        int auxiliar4 = p_afnd;
+                        this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                        p_afnd++;
+                        this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar1, "e", actual.getUltimos(), "S" + auxiliar2));
+                        this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar2, actual.getHijo_izquierdo().getDato(), actual.getUltimos(), "S" + auxiliar3));
+                        this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar3, "e", actual.getUltimos(), "S" + auxiliar2));
+                        this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar3, "e", actual.getUltimos(), "S" + auxiliar4));
+                        noseq1.add(1);
+                        this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar1, "e", actual.getUltimos(), "S" + auxiliar4));
+                    }
+                }
+            } else if (actual.getDato().equals("?")) {
+                ArrayList<Integer> noseq1 = new ArrayList<>();
+                noseq1.add(actual.getHijo_izquierdo().getCabecera());
+                int auxiliar1 = p_afnd;
+                this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                p_afnd++;
+                int auxiliar2 = p_afnd;
+                this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                p_afnd++;
+                int auxiliar3 = p_afnd;
+                this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                p_afnd++;
+                int auxiliar4 = p_afnd;
+                this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                p_afnd++;
+                this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar1, "e", actual.getUltimos(), "S" + auxiliar2));
+                this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar2, actual.getHijo_izquierdo().getDato(), actual.getUltimos(), "S" + auxiliar3));
+                this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar3, "e", actual.getUltimos(), "S" + auxiliar4));
+                noseq1.add(1);
+                this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar1, "e", actual.getUltimos(), "S" + auxiliar4));
+            }else if(actual.getDato().equals("|")){
+                if(actual.getHijo_izquierdo().isHoja() || actual.getHijo_derecho().isHoja()){
+                    ArrayList<Integer> noseq1 = new ArrayList<>();
+                    noseq1.add(actual.getHijo_izquierdo().getCabecera());
+                    int auxiliar1 = p_afnd;
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    p_afnd++;
+                    int auxiliar2 = p_afnd;
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    p_afnd++;
+                    noseq1.add(1);
+                    noseq1.add(2);
+                    noseq1.add(3);
+                    noseq1.add(4);
+                    if(actual.getHijo_izquierdo().isHoja()) {
+                        this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar1, actual.getHijo_izquierdo().getDato(), actual.getUltimos(), "S" + auxiliar2));
+                    }else if (actual.getHijo_derecho().isHoja()){
+                        this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar1, actual.getHijo_derecho().getDato(), actual.getUltimos(), "S" + auxiliar2));
+                    }
+                }else if(actual.getHijo_izquierdo().isHoja() && actual.getHijo_derecho().isHoja()){
+                    ArrayList<Integer> noseq1 = new ArrayList<>();
+                    noseq1.add(actual.getHijo_izquierdo().getCabecera());
+                    int auxiliar1 = p_afnd;
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    p_afnd++;
+                    int auxiliar2 = p_afnd;
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    p_afnd++;
+                    int auxiliar3 = p_afnd;
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    p_afnd++;
+                    int auxiliar4 = p_afnd;
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    p_afnd++;
+                    int auxiliar5 = p_afnd;
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    p_afnd++;
+                    int auxiliar6 = p_afnd;
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    p_afnd++;
+                    int auxiliar7 = p_afnd;
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    p_afnd++;
+                    int auxiliar8 = p_afnd;
+                    this.estados_afnd.add(new Tabla(noseq1, "S" + p_afnd, noseq1));
+                    p_afnd++;
+                    noseq1.add(1);
+                    noseq1.add(2);
+                    this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar1, "e", actual.getUltimos(), "S" + auxiliar2));
+                    noseq1.clear();
+                    this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar2, "e", actual.getUltimos(), "S" + auxiliar3));
+                    this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar3, actual.getHijo_izquierdo().getDato(), actual.getUltimos(), "S" + auxiliar4));
+                    this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar4, "e", actual.getUltimos(), "S" + auxiliar5));
+
+                    this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar2, "e", actual.getUltimos(), "S" + auxiliar6));
+                    this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar6, actual.getHijo_derecho().getDato(), actual.getUltimos(), "S" + auxiliar7));
+                    this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar7, "e", actual.getUltimos(), "S" + auxiliar5));
+                    noseq1.add(1);
+                    noseq1.add(2);
+                    noseq1.add(3);
+                    noseq1.add(4);
+                    this.grafico_afnd.add(new Trans(noseq1, "S" + auxiliar5, "e", actual.getUltimos(), "S" + auxiliar8));
+                }
             }
         }
+
 
         if (padre != 0 ){
             graficar+="N_"+padre+ " -> N_" + aux +";\n";
